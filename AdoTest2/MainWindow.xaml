@@ -1,0 +1,161 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+     xmlns:glob="clr-namespace:System.Globalization;assembly=mscorlib" 
+     xmlns:local="clr-namespace:AdoTest2"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:AdoGemeenschap="clr-namespace:AdoGemeenschap;assembly=AdoGemeenschap" 
+    mc:Ignorable="d" x:Class="AdoTest2.MainWindow"
+        Title="MainWindow" Height="435" Width="700" Loaded="Window_Loaded">
+    <Window.Resources>
+
+        <CollectionViewSource x:Key="leverancierViewSource" d:DesignSource="{d:DesignInstance {x:Type AdoGemeenschap:Leverancier}, CreateList=True}"/>
+        <CollectionViewSource x:Key="plantViewSource" d:DesignSource="{d:DesignInstance {x:Type AdoGemeenschap:Plant}, CreateList=True}"/>
+      
+        <ControlTemplate x:Key="validationTemplate">
+            <DockPanel>
+                <TextBlock Margin="130, 0, 0, 0" Text="{Binding [0].ErrorContent}" DockPanel.Dock="Right" Foreground="Red"/>
+            </DockPanel>
+        </ControlTemplate>
+        <Style x:Key="textBoxInError" TargetType="{x:Type TextBox}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip" 
+                            Value="{Binding RelativeSource={x:Static
+                            RelativeSource.Self},
+                            Path=(Validation.Errors)[0].ErrorContent}"/>
+                    <Setter Property="Background" Value="Yellow"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="comboBoxInError" TargetType="{x:Type ComboBox}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip" 
+                            Value="{Binding RelativeSource={x:Static
+                            RelativeSource.Self},
+                            Path=(Validation.Errors)[0].ErrorContent}"/>
+                    <Setter Property="Background" Value="Yellow"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid ShowGridLines="False">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="150"></RowDefinition>
+            <RowDefinition Height="150"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Row="0" Grid.Column="0">
+        <Label >Leveranciers</Label>
+        <ListBox  DataContext="{StaticResource leverancierViewSource}" 
+                x:Name="ListBoxLeveranciers" 
+        		ItemsSource="{Binding}" 
+                SelectedValuePath="LevNr"
+        		DisplayMemberPath="Naam" 
+                HorizontalAlignment="Left" Height="100" Width="241" SelectionChanged="ListBoxLeveranciers_SelectionChanged" Margin="10,10,0,0"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="0">
+        <Label >Planten</Label>
+        <ListBox DataContext="{StaticResource plantViewSource}" 
+                  x:Name="ListBoxPlanten" 
+                ItemsSource="{Binding}" 
+        		SelectedValuePath="PlantNr"
+        		DisplayMemberPath="Naam" 
+        		HorizontalAlignment="Left" Height="100" Width="241" Margin="10,10,0,0"/>
+        </StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2">
+            <Label FontSize="20">PLANT</Label>
+        <Grid x:Name="grid1" DataContext="{StaticResource plantViewSource}" HorizontalAlignment="Left" VerticalAlignment="Top" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+                <Label Content="Nr:" Grid.Column="0" HorizontalAlignment="Left" Margin="3" Grid.Row="0" VerticalAlignment="Center"/>
+                <TextBox IsReadOnly="True" x:Name="plantNrTextBox" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="3" Grid.Row="0" Text="{Binding PlantNr, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}" VerticalAlignment="Center" Width="120"/>
+
+                <Label Content="Naam:" Grid.Column="0" HorizontalAlignment="Left" Margin="3" Grid.Row="1" VerticalAlignment="Center"/>
+                <TextBox x:Name="naamTextBox" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="3" Grid.Row="1"  Validation.ErrorTemplate="{StaticResource validationTemplate}" Style="{StaticResource textBoxInError}"  VerticalAlignment="Center" Width="120">
+                    <TextBox.Text>
+                        <Binding Path="Naam" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" ValidatesOnExceptions="True" NotifyOnValidationError="True">
+                            <Binding.ValidationRules>
+                                <local:TextRequiredRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <Label Content="Kleur:" Grid.Column="0" HorizontalAlignment="Left" Margin="3" Grid.Row="2" VerticalAlignment="Center"/>
+            <TextBox x:Name="kleurTextBox" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="3" Grid.Row="2" Validation.ErrorTemplate="{StaticResource validationTemplate}" Style="{StaticResource textBoxInError}" VerticalAlignment="Center" Width="120">
+                <TextBox.Text>
+                    <Binding Path="Kleur" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged" ValidatesOnExceptions="True" NotifyOnValidationError="True">
+                        <Binding.ValidationRules>
+                            <local:TextRequiredRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+         
+            <Label Content="Prijs:" Grid.Column="0" HorizontalAlignment="Left" Margin="3" Grid.Row="3" VerticalAlignment="Center"/>
+            <TextBox x:Name="prijsTextBox" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="3" Grid.Row="3" Validation.ErrorTemplate="{StaticResource validationTemplate}" Style="{StaticResource textBoxInError}" VerticalAlignment="Center" Width="120">
+                <TextBox.Text>
+                    <Binding Path="Prijs"
+                             ValidatesOnDataErrors="True"
+                             UpdateSourceTrigger="PropertyChanged" 
+                             ValidatesOnNotifyDataErrors="True"
+                             Mode="TwoWay" 
+                             ConverterCulture="{x:Static glob:CultureInfo.CurrentCulture }" 
+                             StringFormat="c">
+                        <Binding.ValidationRules>
+                            <local:PrijsRule/>
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
+            <Label Content="Soort:" Grid.Column="0" HorizontalAlignment="Left" Margin="3" Grid.Row="4" VerticalAlignment="Center"/>
+                <ComboBox    
+                          x:Name="ComboBoxSoorten"  
+                          SelectedValuePath="SoortNr"  
+                          DisplayMemberPath="SoortNaam"
+                          Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="3"
+                          Grid.Row="4" VerticalAlignment="Center" Width="120"
+                            Validation.ErrorTemplate="{StaticResource validationTemplate}" Style="{StaticResource comboBoxInError}"
+                        >
+                    <ComboBox.SelectedValue>
+                        <Binding Path="SoortNr"
+                                   ValidatesOnDataErrors="True"
+                             UpdateSourceTrigger="PropertyChanged" 
+                             ValidatesOnNotifyDataErrors="True"
+                             Mode="TwoWay" >
+                            <Binding.ValidationRules>
+                                <local:ComboRequiredRule/>
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </ComboBox.SelectedValue>
+                </ComboBox>
+            </Grid>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal">
+            <Button x:Name="ButtonToevoegen" Content="Toevoegen" Width="150" Height="30" Margin="20" Click="ButtonToevoegen_Click"></Button>
+            <Button x:Name="ButtonWijzigen" Content="Wijzigen" Width="150" Height="30" Margin="20" Click="ButtonWijzigen_Click"></Button>
+            <Button x:Name="ButtonVerwijderen" Content="Verwijderen" Width="150" Height="30" Margin="20" Click="ButtonVerwijderen_Click"></Button>
+        </StackPanel>
+
+    </Grid>
+
+</Window>
